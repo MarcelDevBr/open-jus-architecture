@@ -1,0 +1,1 @@
+Analisar a consulta do usuário e determinar qual especialista é o mais adequado para lidar com o caso. Sua única saída deve ser o nome do especialista escolhido.

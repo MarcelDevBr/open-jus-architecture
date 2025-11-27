@@ -1,0 +1,101 @@
+\chapter{INTRODUÇÃO}
+
+Este trabalho detalha a concepção e o desenvolvimento de uma arquitetura de software baseada em Inteligência Artificial,
+projetada para enfrentar um desafio social profundamente enraizado no Brasil: a dificuldade de acesso à informação
+jurídica pelo cidadão comum. Este capítulo inicial contextualiza o problema da assimetria informacional no campo do
+Direito, estabelece a justificativa para a criação de uma solução tecnológica, define o problema de pesquisa, os
+objetivos que nortearam o desenvolvimento e a estrutura geral deste documento.
+
+\section{JUSTIFICATIVA}
+
+O sistema jurídico brasileiro, embora robusto, é caracterizado por uma linguagem e por procedimentos que são, em grande
+parte, inacessíveis à população leiga. Termos técnicos, processos burocráticos e a própria dispersão das normas criam
+uma barreira significativa que afasta o cidadão de seus direitos mais básicos. Este fenômeno, conhecido como "assimetria
+de informação", tem consequências diretas e mensuráveis. Dados da plataforma nacional Consumidor.gov.br, por exemplo,
+que finalizou mais de 1,3 milhão de reclamações em 2023 \cite{mjsp2024}, revelam
+apenas a ponta de um iceberg. Para cada reclamação formalizada, inúmeras outras são abandonadas devido à frustração, ao
+desconhecimento dos procedimentos ou a um sentimento generalizado de desamparo.
+
+Essa lacuna cria uma vasta "demanda latente" por orientação jurídica que, quando não atendida, resulta na perda de
+direitos e na sobrecarga dos canais formais de justiça, como os Procons e os Juizados Especiais, com questões que
+poderiam ser resolvidas de forma mais simples e direta.
+
+Do ponto de vista da Gestão de Tecnologia da Informação (GTI), este cenário representa um problema clássico de gestão da
+informação e otimização de serviços \cite{fernandes2014}. A "demanda latente" por orientação jurídica é um gargalo operacional que
+sobrecarrega canais de atendimento e representa uma oportunidade de mercado não atendida. A decisão de um gestor de
+investir em uma solução tecnológica aqui não é apenas para ganho de eficiência, mas para transformar essa demanda
+reprimida em um serviço de valor agregado. A tecnologia, em particular a Inteligência Artificial (IA), tem o potencial
+de atuar como uma ponte, traduzindo a complexidade jurídica em orientação clara e acionável. Este trabalho se justifica,
+portanto, pela oportunidade de aplicar conceitos modernos de arquitetura de software e IA para desenvolver uma solução
+que não apenas fornece informação, mas que a torna genuinamente útil, gerando impacto social e servindo como um estudo
+de caso sobre a tomada de decisão gerencial na aplicação de tecnologia em domínios especializados.
+
+Para uma empresa, a implementação de uma solução como a proposta representa uma decisão de gestão com múltiplos
+retornos. Primeiramente, atua na redução de custos operacionais, automatizando o primeiro nível de atendimento a
+dúvidas de consumidores e liberando equipes humanas para casos de maior complexidade. Em segundo lugar, funciona como
+uma ferramenta de mitigação de riscos jurídicos, pois ao fornecer informação padronizada e baseada em fontes legais,
+a empresa pode reduzir a incidência de conflitos que escalam para o litígio. Mais importante, o sistema transforma um
+centro de custo (atendimento ao cliente) em um centro de inteligência de negócio. As dúvidas e problemas reportados
+pelos usuários tornam-se uma fonte primária de dados para a tomada de decisão, permitindo que gestores identifiquem
+falhas em produtos, melhorem a comunicação e ajustem estratégias de mercado de forma proativa.
+
+Além do valor gerencial e de negócio, o projeto possui uma forte justificativa social, alinhando-se estrategicamente com
+os Objetivos de Desenvolvimento Sustentável (ODS), uma coleção de 17 metas globais estabelecidas pela Assembleia Geral
+das Nações Unidas em 2015 \cite{un2015}. A solução proposta contribui diretamente para:
+\begin{itemize}
+\item ODS 4 (Educação de Qualidade): Ao promover a educação para a cidadania e o consumo consciente, traduzindo conceitos jurídicos complexos em linguagem simples.
+\item ODS 10 (Redução das Desigualdades): Ao democratizar o acesso à orientação jurídica qualificada para todos, independentemente da sua condição socioeconômica.
+\item ODS 12 (Consumo e Produção Responsáveis): Ao capacitar consumidores com conhecimento, incentivando práticas comerciais mais justas.
+\item ODS 16 (Paz, Justiça e Instituições Eficazes): Ao fortalecer o acesso à justiça e aliviar potencialmente a carga sobre as instituições formais de proteção ao consumidor.
+\end{itemize}
+
+\newpage
+Para consolidar a visão geral do projeto apresentada neste capítulo, o mapa mental a seguir interliga o problema central,
+a solução proposta, os seus objetivos e o impacto social esperado.
+
+\begin{figure}[h!]
+    \centering
+    \caption{Mapa Mental: Visão geral do projeto, conectando o problema, a solução, os objetivos e o alinhamento com os ODS.}
+    \label{fig:mapa_mental_01}
+    \includegraphics[width=1.0\textwidth]{imagens/mapa_mental_01}
+    \fonte{Elaborado pelo autor (2025).}
+\end{figure}
+
+\section{DEFINIÇÃO DO PROBLEMA}
+
+Com base na justificativa apresentada, o problema de pesquisa que este trabalho busca resolver é:
+
+Como arquitetar e desenvolver um sistema de software que utilize Inteligência Artificial para analisar consultas
+jurídicas de usuários leigos, buscar informações em fontes confiáveis e entregar uma resposta que seja, ao mesmo tempo,
+precisa em seu conteúdo e simples em sua forma?
+
+Este problema se desdobra em desafios técnicos e de gestão, tais como:
+
+\begin{itemize}
+\item Confiabilidade da IA: Grandes Modelos de Linguagem (LLMs) são conhecidos por ocasionalmente "alucinar". Como garantir que as respostas do sistema sejam baseadas em leis reais?
+\item Complexidade da Tarefa: Responder a uma consulta jurídica envolve várias etapas (compreensão, pesquisa, análise, comunicação). Uma única IA monolítica pode não ser eficiente para realizar todas essas tarefas bem.
+\item Manutenibilidade e Escalabilidade: Como projetar o sistema de forma que ele seja fácil de manter e que, no futuro, possa ser expandido para cobrir outras áreas do Direito sem a necessidade de reconstruir tudo do zero?
+\end{itemize}
+
+\section{OBJETIVOS}
+
+\subsection{Objetivo Geral}
+
+Projetar, desenvolver e documentar uma arquitetura de software funcional que utiliza um sistema multiagente e técnicas
+de IA para fornecer orientação jurídica preliminar de forma automatizada, confiável e acessível.
+
+\subsection{Objetivos Específicos}
+
+\begin{enumerate}
+\item Modelar uma arquitetura de software em camadas, separando as responsabilidades de apresentação, orquestração e cognição.
+\item Implementar um sistema multiagente, onde cada agente de IA possui uma especialidade e responsabilidade clara dentro de um fluxo de trabalho.
+\item Integrar uma técnica de Geração Aumentada por Recuperação (RAG) para conectar os agentes a uma base de conhecimento de documentos legais.
+\item Desenvolver um protótipo funcional focado no Direito do Consumidor para validar a arquitetura proposta.
+\end{enumerate}
+
+\section{ESTRUTURA DO TRABALHO}
+
+Este documento está organizado em cinco capítulos. O Capítulo 1 (este capítulo) apresenta o projeto. O Capítulo 2
+explora a fundamentação teórica. O Capítulo 3 descreve a metodologia de desenvolvimento. O Capítulo 4 detalha a
+arquitetura e o desenvolvimento do protótipo. Por fim, o Capítulo 5 apresenta as conclusões e aponta direções para
+trabalhos futuros.

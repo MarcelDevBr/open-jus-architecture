@@ -1,0 +1,47 @@
+% !TEX encoding = UTF-8
+% Capa customizada do IFSC
+
+\makeatletter
+\renewcommand{\imprimircapa}{
+    \AddToShipoutPictureBG*{
+        \put(-5,0) {
+            \includegraphics[width=\paperwidth,height=\paperheight]{imagens/fundo_capa}
+        }
+    }
+    \begin{capa}
+        \centering
+        \vspace*{1.8cm}
+
+        \color{black}
+        \ABNTEXchapterfont\large
+        \bfseries
+        \fontsize{14pt}{22}
+        \MakeUppercase{
+            câmpus \imprimircampus \\
+            \imprimirdepartamento \\
+            \imprimirtipocurso\ em \imprimircurso \\
+        }
+        \vspace*{1cm}
+
+        \ABNTEXchapterfont\huge\bfseries
+        \fontsize{18pt}{22}
+        \MakeUppercase{\imprimirautor}
+        \vfill
+
+        \begin{flushright}
+            \color{bordo}\bfseries
+            \fontsize{25pt}{22}
+            \ABNTEXchapterfont\bfseries\Huge
+            \thetitle
+        \end{flushright}
+        \vspace*{2.4cm}
+
+        \color{bordo}\bfseries
+        \fontsize{12pt}{22}
+        \imprimirlocal \\
+        \imprimirdata
+    \end{capa}
+}
+\makeatother
+
+\imprimircapa

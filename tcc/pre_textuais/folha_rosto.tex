@@ -1,0 +1,37 @@
+% --- FOLHA DE ROSTO (pré-textual) ---
+\begin{folhaderosto}
+    \begin{center}
+        \ABNTEXchapterfont\MakeUppercase\imprimirinstituicao \\
+        \ABNTEXchapterfont\MakeUppercase\imprimirdepartamento \\
+        \ABNTEXchapterfont\MakeUppercase{Curso Superior de }\MakeUppercase\imprimircurso \\
+
+        \vspace*{\fill}
+
+        {\ABNTEXchapterfont\large\textbf{\imprimirautor}}
+        \vspace*{\fill}
+
+        {\ABNTEXchapterfont\large\imprimirtitulo}
+    \end{center}
+
+    \vspace*{\fill}
+    \hspace{.45\textwidth}
+    \begin{minipage}{.5\textwidth}
+        \imprimirpreambulo
+    \end{minipage}
+    \vspace*{\fill}
+
+    % --- Orientador e Coorientador ---
+    \begin{center}
+        \begin{tabular}{c}
+            \imprimirorientador \\
+            (Orientador) \\
+        \end{tabular}
+    \end{center}
+
+    \vspace*{\fill}
+    \begin{center}
+        % --- Altere a cidade e o ano ---
+        \imprimirlocal \\
+        \imprimirdata
+    \end{center}
+\end{folhaderosto}

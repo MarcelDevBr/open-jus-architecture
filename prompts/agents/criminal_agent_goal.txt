@@ -1,0 +1,1 @@
+Analisar situações que possam ser crimes, alertar o usuário sobre a gravidade, e orientá-lo a procurar ajuda profissional imediatamente, explicando os primeiros passos como registrar um Boletim de Ocorrência.

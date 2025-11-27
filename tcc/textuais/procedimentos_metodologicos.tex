@@ -1,0 +1,122 @@
+\chapter{PROCEDIMENTOS METODOLÓGICOS}
+
+Este trabalho adotou uma abordagem dupla de metodologia, distinguindo a metodologia da pesquisa acadêmica da metodologia
+de desenvolvimento do artefato de software.
+
+\section{Metodologia da Pesquisa}
+
+Quanto aos fins, esta pesquisa é classificada como aplicada, pois visa gerar conhecimentos para a aplicação prática e
+dirigida à solução de um problema específico \cite{gil2008}. Quanto aos meios, a pesquisa é de natureza exploratória,
+buscando proporcionar maior familiaridade com o problema, e descritiva, descrevendo as características da solução
+proposta. Os procedimentos seguiram uma sequência lógica:
+
+\begin{enumerate}
+\item Revisão Bibliográfica: Investigação dos conceitos de Sistemas Multiagente, RAG, Legal Design e outros, para construir o embasamento teórico.
+\item Modelagem da Arquitetura: Desenho da arquitetura de software em camadas e da pipeline de agentes, como solução para o problema de pesquisa.
+\item Desenvolvimento do Protótipo: Implementação do artefato de software como prova de conceito e objeto de estudo.
+\item Análise e Documentação: Descrição detalhada da arquitetura, dos componentes e dos resultados, consolidada neste documento.
+\end{enumerate}
+
+\section{Metodologia de Desenvolvimento do Software}
+
+Para a construção do protótipo, foi adotada uma metodologia de \textbf{prototipagem evolutiva}. Essa abordagem é ideal
+para projetos de inovação, onde os requisitos nem sempre são totalmente conhecidos no início. O processo consiste em
+construir uma versão inicial funcional (o protótipo), testá-la, aprender com ela e, em seguida, usar esse aprendizado
+para refinar e adicionar novas funcionalidades em ciclos \cite{sommerville2011}. O roteiro de desenvolvimento foi
+planejado em fases, conforme ilustrado no diagrama abaixo.
+
+\begin{figure}[H]
+    \centering
+    \caption{Diagrama: Metodologia de Prototipagem Evolutiva em Fases.}
+    \label{fig:diagrama_04}
+    \includegraphics[width=0.8\textwidth]{imagens/diagrama_04}
+    \fonte{Elaborado pelo autor (2025).}
+\end{figure}
+
+A seguir, detalhamos cada fase do ciclo de desenvolvimento do protótipo.
+
+\subsection{Fase 1: Prova de Conceito (PoC) da Tecnologia RAG}
+
+O primeiro e mais crítico passo foi validar a hipótese fundamental do projeto: era tecnicamente viável usar a técnica de
+Geração Aumentada por Recuperação (RAG) para responder a perguntas com base no texto do Código de Defesa do Consumidor
+(CDC)? Esta fase focou exclusivamente na Camada de Conhecimento.
+
+\begin{itemize}
+    \item \textbf{Objetivo:} Validar a eficácia da busca semântica e da geração de respostas fundamentadas.
+    \item \textbf{Atividades:}
+        \begin{enumerate}
+            \item Preparação da Base de Conhecimento: O texto do CDC foi obtido e tratado, sendo dividido em trechos
+                (chunks) para a vetorização.
+            \item Implementação do RAG: Um script simples em Python foi criado utilizando a biblioteca LangChain para
+                orquestrar o processo de: a) receber uma pergunta, b) convertê-la em um embedding, c) usar o FAISS para
+                encontrar os trechos mais relevantes do CDC, e d) passar esses trechos como contexto para um LLM da
+                OpenAI gerar uma resposta.
+            \item Testes Iniciais: Foram realizados testes manuais com perguntas-chave para avaliar a precisão do
+                contexto recuperado e a fidelidade da resposta gerada.
+        \end{enumerate}
+    \item \textbf{Resultado Esperado:} Confirmação de que a abordagem RAG era capaz de encontrar os artigos corretos do
+        CDC e gerar respostas factualmente corretas, mitigando o risco de "alucinações". O sucesso desta fase foi o
+        "sinal verde" para prosseguir com o desenvolvimento.
+\end{itemize}
+
+\subsection{Fase 2: Desenvolvimento do Agente Especialista Monolítico}
+
+Uma vez validada a tecnologia RAG, o próximo passo foi encapsular essa lógica dentro de um agente autônomo. Nesta fase,
+o foco foi na Camada de Cognição, mas com um único agente "faz-tudo".
+
+\begin{itemize}
+    \item \textbf{Objetivo:} Criar um único agente capaz de receber uma pergunta, usar a ferramenta RAG e gerar uma
+        resposta final para o usuário.
+    \item \textbf{Atividades:}
+        \begin{enumerate}
+            \item Criação do Agente "Advogado Geral": Usando o framework CrewAI, foi criado um único agente. O prompt
+                deste agente era complexo, instruindo-o a ser, ao mesmo tempo, um analista técnico e um bom comunicador.
+            \item Integração da Ferramenta RAG: A lógica da PoC da Fase 1 foi transformada em uma "ferramenta" formal
+                (tool) que o agente do CrewAI poderia invocar.
+            \item Testes de Desempenho: Foram realizados testes para avaliar a qualidade das respostas geradas por este
+                agente único.
+        \end{enumerate}
+    \item \textbf{Aprendizado e Iteração:} Os testes revelaram uma limitação fundamental da abordagem monolítica. O
+        agente frequentemente tinha dificuldade em equilibrar as duas personas: ora gerava uma resposta tecnicamente
+        precisa, mas excessivamente densa e jurídica; ora gerava uma resposta simples e amigável, mas que sacrificava
+        detalhes técnicos importantes. Essa dificuldade em "vestir dois chapéus" ao mesmo tempo foi a principal
+        justificativa para evoluir para uma arquitetura multiagente.
+\end{itemize}
+
+\subsection{Fase 3: Implementação da Pipeline Multiagente}
+
+Com base no aprendizado da fase anterior, o sistema foi redesenhado para a arquitetura multiagente final, que é o
+coração deste trabalho.
+
+\begin{itemize}
+    \item \textbf{Objetivo:} Implementar a pipeline de três estágios (Roteamento, Análise, Comunicação) para especializar
+        as tarefas e melhorar a qualidade da resposta final.
+    \item \textbf{Atividades:}
+        \begin{enumerate}
+            \item Decomposição de Responsabilidades: O agente monolítico foi decomposto em três agentes especializados,
+                conforme descrito em detalhes no Capítulo 4: o Roteador, o Analista Jurídico e o Comunicador.
+            \item Criação da "Tripulação" (Crew): O arquivo `crew_manager.py` foi criado para orquestrar a colaboração.
+                As tarefas foram definidas em uma sequência linear (`Process.sequential`), garantindo que a saída de um
+                agente se tornasse a entrada do próximo.
+            \item Refinamento dos Prompts: Os prompts de cada agente foram reescritos para serem altamente focados em
+                sua única responsabilidade, eliminando a ambiguidade da fase anterior.
+            \item Testes Comparativos: Novos testes foram realizados e os resultados foram comparados com os da Fase 2.
+                A melhora na qualidade, clareza e precisão da resposta final foi notável, validando a superioridade da
+                abordagem multiagente.
+        \end{enumerate}
+    \item \textbf{Resultado Esperado:} Um protótipo funcional que implementa a arquitetura completa descrita no Capítulo
+        4, capaz de gerar respostas de alta qualidade de forma consistente e auditável.
+\end{itemize}
+
+\subsection{Justificativa da Stack de Tecnologia para o MVP}
+
+Uma decisão estratégica de gestão na fase de MVP (Mínimo Produto Viável) foi a seleção de uma stack de tecnologia focada
+na agilidade e no baixo custo, utilizando plataformas No-code/Low-code como o \textbf{Make.com} para orquestração de
+fluxos e o \textbf{Google Sheets} para armazenamento inicial de dados e logs.
+
+Essa abordagem, embora não seja escalável para produção, foi fundamental para a metodologia de prototipagem evolutiva.
+Ela permitiu a validação rápida de hipóteses de interface e fluxo de usuário sem o investimento inicial em uma
+infraestrutura de software complexa (como a construção de um front-end web e um banco de dados robusto). O núcleo da
+solução, a API com a lógica dos agentes, foi desenvolvido em Python utilizando CrewAI, FastAPI e LangChain/FAISS,
+garantindo que o "coração" do sistema fosse sólido e preparado para futuras evoluções, enquanto as "bordas" (interface
+e armazenamento) eram flexíveis e de baixo custo para permitir a experimentação ágil.

@@ -1,0 +1,252 @@
+\chapter{REVISÃO DA LITERATURA}
+
+Este capítulo aprofunda os conceitos teóricos que fundamentam a arquitetura de software proposta. Para um público
+multidisciplinar, é essencial que os pilares tecnológicos e de gestão sejam explicados de forma didática,
+estabelecendo uma base sólida para a compreensão das decisões de design detalhadas no Capítulo 4.
+
+\section{Arquiteturas de Agentes Inteligentes}
+
+\subsection{Agentes Inteligentes}
+
+O conceito de um agente inteligente é a unidade fundamental da Inteligência Artificial moderna. De acordo com a
+definição canônica, um agente é "qualquer coisa que pode ser vista como percebendo seu ambiente através de sensores e
+agindo sobre esse ambiente através de atuadores" \cite[p. 34]{russell2021}. Um agente de IA, portanto, é um
+programa de computador que exibe esse comportamento, operando de forma autônoma para atingir metas pré-definidas.
+
+Para tornar essa definição mais concreta, um agente inteligente deve exibir autonomia, aprendizado e cooperação. Um
+termostato, por exemplo, percebe a temperatura (sensor) e liga o aquecedor (atuador), mas não é inteligente, pois seu
+comportamento é fixo. Um agente de software inteligente, como o proposto neste trabalho, não apenas executa uma tarefa,
+mas o faz com um grau de independência, adaptando suas ações para atingir um objetivo. Existem diferentes arquiteturas
+para agentes, desde os simples agentes reativos (que respondem diretamente a estímulos) até agentes baseados em modelos
+(que mantêm um estado interno do mundo) e agentes baseados em objetivos (que agem para atingir metas). O modelo BDI,
+discutido a seguir, é uma forma avançada de agente baseado em objetivos \cite{russell2021}.
+
+\subsection{O Modelo Cognitivo BDI (Belief-Desire-Intention)}
+
+Para que um agente atue de forma racional e deliberada, é útil modelar seu processo de "raciocínio". O modelo BDI é uma
+arquitetura cognitiva que descreve o comportamento de um agente com base em três componentes mentais \cite{rao1995}:
+
+\begin{itemize}
+\item Beliefs (Crenças): A visão de mundo do agente; o que ele acredita ser verdade. No sistema proposto, o backstory de um agente define suas crenças estáticas. As crenças dinâmicas são formadas pela consulta do usuário e pelo contexto retornado por suas ferramentas.
+\item Desires (Desejos): Os objetivos de alto nível do agente. O goal definido para um agente é uma representação direta de um desejo.
+\item Intentions (Intenções): O comprometimento do agente em seguir um plano para alcançar um desejo. O thought process de um agente, onde ele decide qual ferramenta usar, pode ser visto como a formação de uma intenção.
+\end{itemize}
+
+Este modelo é particularmente útil para sistemas complexos, pois permite que o comportamento do agente seja programado
+de forma mais abstrata e compreensível. Em vez de codificar uma série de comandos "se-então", o desenvolvedor define os
+objetivos (desejos) e o conhecimento (crenças) do agente, e o próprio agente delibera sobre a melhor forma de agir
+(intenções).
+
+\begin{figure}[H]
+    \centering
+    \caption{Diagrama: Ciclo de raciocínio de um agente BDI. O agente percebe o mundo, atualiza suas crenças, delibera sobre seus desejos para formar intenções, cria um plano e age.}
+    \label{fig:diagrama_01}
+    \includegraphics[width=0.4\textwidth]{imagens/diagrama_01}
+    \fonte{Elaborado pelo autor (2025).}
+\end{figure}
+
+\subsection{Sistemas Multiagente (SMA) e sua Justificativa Gerencial}
+
+Um Sistema Multiagente (SMA) é um sistema composto por múltiplos agentes que interagem para resolver problemas que
+seriam difíceis ou impossíveis para um agente único solucionar \cite{wooldridge2009}. A escolha por uma arquitetura SMA,
+em detrimento de uma abordagem com um único agente monolítico, é uma decisão estratégica de gestão que responde
+diretamente às perguntas: "por que essa estrutura?" e "por que essa solução?". A justificativa se baseia em quatro
+pilares gerenciais:
+
+\begin{itemize}
+\item Escalabilidade e Custo de Expansão: Para um gestor de TI, a pergunta fundamental é como o sistema pode crescer. A arquitetura multiagente oferece uma resposta clara e de baixo custo. Para expandir o sistema para o Direito Trabalhista, por exemplo, não é necessário treinar um novo modelo gigante e generalista. A equipe pode desenvolver um novo Analista Trabalhista e uma nova base de conhecimento, reutilizando toda a estrutura de orquestração e os agentes de Roteamento e Comunicação existentes. Isso torna a expansão para novas áreas de negócio mais rápida e barata.
+\item Manutenibilidade e Custo Total de Propriedade (TCO): A clareza de responsabilidades de cada agente simplifica a manutenção. Quando um problema ocorre, é mais fácil diagnosticar qual agente falhou. A configuração dos agentes via Engenharia de Prompts (arquivos de texto) permite que ajustes finos no comportamento sejam feitos por analistas, sem a necessidade de envolver desenvolvedores de software para tudo, reduzindo o custo total de propriedade (TCO) da solução.
+\item Mitigação de Risco e Complexidade: Um único agente responsável por todas as tarefas (compreender, pesquisar, analisar, formatar) se torna um "ponto único de falha". A especialização de agentes isola os problemas. Se o agente Comunicador não está sendo empático o suficiente, a equipe pode ajustá-lo sem o risco de impactar a precisão da análise jurídica. Isso reduz o risco de regressões e simplifica os ciclos de teste.
+\item Otimização de Desempenho e Custo: A especialização permite otimizar o modelo de IA para cada tarefa. A Análise Técnica pode exigir um modelo de linguagem mais poderoso e caro, enquanto o Roteamento pode usar um modelo mais simples, rápido e barato. Essa granularidade permite ao gestor otimizar o balanço entre custo de API e qualidade da resposta, uma decisão puramente gerencial.
+\item Aplicação na Arquitetura Proposta: A arquitetura deste projeto, com sua equipe de agentes (Roteador, Analista Jurídico, Comunicador), materializa esses benefícios. A colaboração em um fluxo de trabalho demonstra não apenas a eficácia técnica da especialização, mas sua validade como uma decisão de gestão para construir uma solução robusta, sustentável e escalável.
+\end{itemize}
+
+A abordagem de agentes especializados pode ser vista como um análogo, no mundo da IA, à filosofia de \textbf{microsserviços}
+na engenharia de software. Em vez de construir uma aplicação monolítica, a arquitetura de microsserviços estrutura uma
+aplicação como uma coleção de serviços pequenos, autônomos e fracamente acoplados \cite{newman2015}. Da mesma forma, a
+arquitetura multiagente deste trabalho decompõe um problema cognitivo complexo em tarefas menores, atribuídas a agentes
+especializados, ganhando em troca a mesma flexibilidade, escalabilidade e manutenibilidade.
+
+\section{Tecnologias de Processamento de Linguagem}
+
+\subsection{A Arquitetura Transformer}
+
+Os Grandes Modelos de Linguagem (LLMs) são a tecnologia central que impulsiona os agentes do sistema. Sua capacidade de
+compreender e gerar texto vem da arquitetura Transformer \cite{vaswani2017}. Diferente de modelos anteriores que
+liam o texto em sequência, o Transformer processa todas as palavras de uma vez. Sua inovação fundamental é o mecanismo
+de autoatenção (self-attention), que permite ao modelo ponderar a importância de cada palavra em relação a todas as
+outras na frase, capturando o contexto de forma muito mais rica e eficaz. É essa capacidade de entender o contexto que
+permite aos LLMs realizar tarefas complexas de linguagem.
+
+O mecanismo de autoatenção funciona calculando "pesos de atenção" para cada palavra em relação a todas as outras. Uma
+palavra como "ele" em "o advogado ajudou o cliente porque ele era experiente" terá sua atenção fortemente direcionada
+para "advogado", permitindo que o modelo resolva a ambiguidade. Essa capacidade de capturar dependências de longo prazo
+no texto é o que diferencia o Transformer de arquiteturas anteriores, como as Redes Neurais Recorrentes (RNNs).
+
+\subsection{Busca Semântica, Embeddings e Bancos de Dados Vetoriais}
+
+O grande avanço dos LLMs foi sua capacidade de ir além da busca por palavra-chave, realizando uma busca semântica. Isso
+é possível através de Embeddings, que são representações vetoriais (listas de números) de textos \cite{mikolov2013}.
+Textos com significados parecidos são posicionados próximos em um "espaço vetorial semântico". Para que essa busca seja
+eficiente, são utilizados Bancos de Dados Vetoriais, como o FAISS \cite{johnson2019}, que são otimizados para
+encontrar rapidamente os vetores mais próximos de uma dada consulta.
+
+Por exemplo, em um sistema de busca semântica, a consulta "posso devolver um produto que comprei online?" seria
+convertida em um vetor. Esse vetor seria então usado para encontrar, no banco de dados vetorial, os trechos de texto
+cujos vetores são mais próximos, como o Artigo 49 do CDC, que trata do "direito de arrependimento", mesmo que a palavra
+"arrependimento" não estivesse na pergunta original.
+
+\subsection{Geração Aumentada por Recuperação (RAG)}
+
+A RAG é uma técnica que torna a IA mais confiável ao forçá-la a basear suas respostas em um conjunto de documentos
+fornecidos, como em uma "prova com consulta" \cite{lewis2020}. O processo, ilustrado no Diagrama 2, combina a busca
+semântica (Recuperação) com a capacidade de geração de texto do LLM (Geração).
+
+O principal motivador para o uso da RAG é mitigar o risco de \textbf{alucinações} dos LLMs. Uma alucinação ocorre quando o
+modelo gera informações que são factualmente incorretas, não relacionadas ao contexto ou simplesmente inventadas. Isso
+acontece porque os LLMs são, em sua essência, modelos probabilísticos treinados para prever a próxima palavra mais
+plausível em uma sequência, e não para acessar uma base de fatos. A RAG contorna esse problema ao "aterrar" (ground) o
+modelo em um contexto factual e explícito, instruindo-o a basear sua resposta apenas nos documentos recuperados.
+
+É crucial distinguir a RAG de uma simples busca semântica. Uma busca semântica apenas encontra e retorna os trechos de
+texto mais relevantes de uma base de conhecimento. O resultado seria uma lista de artigos de lei, que, embora precisos,
+ainda exigiriam que o usuário os interpretasse. A RAG vai além: ela usa os resultados da busca semântica como
+contexto para que um modelo de linguagem generativo (o "G" da sigla) construa uma resposta coesa, contextualizada e em
+linguagem natural. Portanto, a RAG não apenas encontra a informação, mas a sintetiza em uma orientação clara, o que é
+essencial para o objetivo deste trabalho de democratizar a informação \cite{lewis2020}.
+
+\begin{figure}[H]
+    \centering
+    \caption{Diagrama: Fluxo do processo de Geração Aumentada por Recuperação (RAG). O sistema recupera informações relevantes antes de gerar a resposta.}
+    \label{fig:diagrama_02}
+    \includegraphics[width=1.0\textwidth]{imagens/diagrama_02}
+    \fonte{Elaborado pelo autor (2025).}
+\end{figure}
+
+Aplicação no Sistema Proposto: A RAG é a espinha dorsal da confiabilidade do sistema. Ela garante que, ao responder
+sobre o direito de um consumidor, o agente especialista está consultando ativamente o texto do Código de Defesa do
+Consumidor, e não apenas "lembrando" de informações.
+
+\subsection{Engenharia de Prompts (Prompt Engineering)}
+
+A Engenharia de Prompts é a prática de projetar cuidadosamente as instruções (role, goal, backstory) dadas a um modelo
+de IA para controlar seu comportamento \cite{liu2023}. Essa técnica é uma ferramenta de gestão crucial, pois permite
+que o comportamento dos agentes seja ajustado através de arquivos de texto, sem reprogramar o modelo.
+
+Um prompt eficaz não é apenas uma pergunta, mas um conjunto de instruções que molda a "personalidade" e o foco do
+agente. Por exemplo, o prompt do "Agente Comunicador" não diz apenas "reescreva o texto", mas inclui diretrizes como
+"use uma linguagem empática", "evite jargões jurídicos" e "foque em ações práticas que o usuário pode tomar". Isso
+transforma um LLM genérico em um especialista em comunicação.
+
+Do ponto de vista estratégico, a engenharia de prompts oferece uma alternativa mais ágil e de menor custo ao
+\textbf{fine-tuning} (ajuste fino). O fine-tuning é o processo de retreinar um LLM pré-treinado em um conjunto de dados
+específico para especializá-lo em uma tarefa. Embora poderoso, o fine-tuning exige grandes volumes de dados, alto custo
+computacional e expertise técnica. A engenharia de prompts, por outro lado, permite a especialização "em tempo de
+execução", oferecendo uma flexibilidade muito maior para prototipagem e ajustes iterativos, o que é ideal para o
+contexto deste projeto.
+
+\section{IA Explicável (XAI): Abrindo a Caixa-Preta}
+
+\subsection{O Problema da Opacidade e a Necessidade de Confiança}
+
+Muitos modelos avançados de IA, especialmente em aprendizado profundo, funcionam como uma \textbf{"caixa-preta" (black
+box)}. Eles recebem dados de entrada e produzem uma saída (uma decisão ou previsão), mas o processo interno que leva a
+essa saída é tão complexo que é ininteligível para um observador humano. Em domínios de baixo risco, como a recomendação
+de filmes, isso pode ser aceitável. No entanto, em áreas de alto risco como o Direito, a medicina ou as finanças, a
+incapacidade de entender \textit{por que} um sistema de IA tomou uma determinada decisão representa um risco inaceitável
+e uma barreira para a adoção \cite{arrieta2020}.
+
+A \textbf{Inteligência Artificial Explicável (XAI)} é um campo de pesquisa e prática que visa resolver esse problema,
+desenvolvendo sistemas de IA que possam fornecer explicações claras e compreensíveis sobre suas decisões. O programa
+XAI da DARPA (Agência de Projetos de Pesquisa Avançada de Defesa dos EUA) define o objetivo como a criação de "parceiros
+mais confiáveis" para os humanos, promovendo a capacidade de entender, confiar e gerenciar a nova geração de sistemas de
+IA \cite{darpa2016}. Um sistema explicável, segundo a DARPA, deve ser capaz de responder a perguntas como: "Por que você
+fez isso?", "Por que não outra coisa?" e "Quando você falha?".
+
+\subsection{A Arquitetura deste Projeto como uma Solução de XAI}
+
+A arquitetura proposta neste trabalho foi deliberadamente projetada para ser explicável por natureza, transformando a
+XAI de um requisito a ser adicionado posteriormente em um pilar fundamental do design. A explicabilidade é alcançada em
+dois níveis complementares, que respondem a duas perguntas cruciais do usuário: "Com base em quê?" e "Como?".
+
+A literatura de XAI distingue entre explicabilidade \textbf{global} (entender o comportamento geral do modelo) e
+explicabilidade \textbf{local} (entender por que o modelo tomou uma decisão específica para uma entrada particular)
+\cite{arrieta2020}. A arquitetura deste projeto se destaca ao fornecer uma forte explicabilidade local para cada consulta
+do usuário.
+
+\begin{figure}[H]
+    \centering
+    \caption{Diagrama: Comparação entre um modelo de IA "caixa-preta" e a abordagem multiagente, que torna o processo de decisão transparente.}
+    \label{fig:diagrama_03}
+    \includegraphics[width=1.0\textwidth]{imagens/diagrama_03}
+    \fonte{Elaborado pelo autor (2025).}
+\end{figure}
+
+\begin{enumerate}
+\item Transparência da Fonte (O quê?): Este é o primeiro nível de explicação, garantido pela técnica RAG. O sistema não apenas gera uma resposta, mas também cita a fonte legal específica (o artigo do Código de Defesa do Consumidor, por exemplo) que usou como base. Isso responde à pergunta: "Com base em que você está me dizendo isso?". Para um gestor, isso garante que a operação está ancorada em regras de negócio verificáveis, e não em conhecimento opaco da IA.
+\item Transparência do Processo (Como?): Este é o segundo e mais profundo nível de explicação, possibilitado pela arquitetura multiagente. Ao invés de uma única IA "caixa-preta" que gera uma resposta, o sistema segmenta o raciocínio em etapas claras e auditáveis. É possível rastrear o fluxo: o Agente Roteador classificou a pergunta, o Agente Analista buscou a informação e formulou a lógica, e o Agente Comunicador traduziu o resultado para o usuário. Isso responde à pergunta: "Como você chegou a essa conclusão?". Para um gestor, essa transparência é crucial para depuração, otimização e, acima de tudo, para construir confiança na automação de processos complexos.
+\end{enumerate}
+
+Aplicação no Sistema Proposto: A combinação de RAG e uma pipeline multiagente não é apenas uma escolha técnica, mas uma
+decisão de design focada em governança e confiança. Ela permite que o sistema seja auditado, que seus erros sejam
+diagnosticados com precisão (foi um erro de roteamento, de análise ou de comunicação?) e que a sua operação seja
+compreendida por stakeholders não-técnicos, um requisito fundamental para a adoção de IA em ambientes corporativos.
+
+\section{Conceitos do Domínio de Aplicação}
+
+\subsection{Legal Design e UX Writing}
+
+O Legal Design aplica os princípios do Design Thinking ao mundo jurídico, focando em criar serviços que sejam centrados
+no ser humano \cite{hagan2022}. No contexto deste projeto, isso se manifesta na busca pela empatia, que não é um mero
+detalhe, mas um requisito funcional crítico. Atingir esse nível de comunicação eficaz exige um esforço deliberado de UX
+Writing (a prática de escrever o texto visto pelos usuários em uma interface\linebreak) na criação da persona do communication_agent,
+com testes iterativos para avaliar a resposta emocional dos usuários.
+
+\section{Gestão Estratégica de Tecnologia}
+
+As decisões de arquitetura de software não ocorrem em um vácuo; elas estão intrinsecamente ligadas a objetivos de
+negócio e à gestão de recursos. Esta seção aborda os conceitos de gestão que fundamentam as escolhas feitas neste projeto.
+
+\subsection{Custo Total de Propriedade (TCO)}
+
+O Custo Total de Propriedade (TCO) é uma análise financeira projetada para avaliar o custo completo de um ativo de
+tecnologia ao longo de seu ciclo de vida \cite{fernandes2014}. Ele vai além do preço de aquisição, englobando todos
+os custos diretos e indiretos, como implementação, manutenção, treinamento, suporte e operação (e.g., custos de API).
+A decisão por uma arquitetura multiagente e modular, conforme discutido na seção 2.1.3, é uma estratégia para otimizar o
+TCO. A facilidade de manutenção e a capacidade de expandir o sistema de forma incremental (adicionando novos agentes sem
+reestruturar o todo) reduzem os custos de longo prazo, tornando o investimento mais sustentável.
+
+\subsection{Indicadores Chave de Desempenho (KPIs) e Inteligência de Negócio (BI)}
+
+Indicadores Chave de Desempenho (KPIs) são valores mensuráveis que demonstram quão eficazmente uma organização está
+atingindo seus objetivos de negócio \cite{eckerson2010}. No contexto de TI, eles são usados para monitorar a saúde,
+a eficiência e o impacto dos sistemas. A Inteligência de Negócio (BI), por sua vez, refere-se ao processo de usar
+tecnologias para transformar dados brutos em insights acionáveis que informam a tomada de decisão
+estratégica \cite{turban2011}.
+
+Um sistema como o proposto neste trabalho é projetado para ser mais do que uma ferramenta operacional; ele é um motor de
+geração de dados. Os KPIs propostos no framework de avaliação (Capítulo 4) — como as dúvidas mais frequentes dos
+usuários ou a taxa de sucesso da IA — são a matéria-prima para um processo de BI. Eles permitem que um gestor transforme
+o que tradicionalmente é um centro de custo (atendimento ao cliente) em um centro de inteligência, usando dados para
+guiar decisões sobre melhoria de produtos, estratégias de comunicação e alocação de recursos.
+
+\section{Princípios de Arquitetura e Desenvolvimento de Software}
+
+\subsection{Arquitetura em Camadas e Separação de Preocupações}
+
+A arquitetura em camadas é um padrão de design de software que organiza uma aplicação em camadas horizontais, cada uma
+com uma responsabilidade específica (e.g., Apresentação, Lógica de Negócio, Acesso a Dados) \cite{fowler2002}. Este padrão
+implementa o princípio fundamental da Separação de Preocupações (Separation of Concerns), que advoga pela divisão de um
+sistema em partes distintas com funcionalidades sobrepostas mínimas. A arquitetura em quatro camadas (Apresentação,
+Orquestração, Cognição, Conhecimento) adotada neste trabalho é uma aplicação direta desse princípio, resultando em um
+sistema mais modular, flexível e de fácil manutenção, onde cada camada pode ser modificada ou substituída com impacto
+mínimo sobre as outras.
+
+\subsection{Prototipagem Evolutiva}
+
+A prototipagem evolutiva é uma metodologia de desenvolvimento de software na qual um protótipo inicial é construído e,
+em seguida, refinado iterativamente com base no feedback dos usuários até se tornar o produto final \cite{sommerville2011}.
+Diferente de modelos rígidos e sequenciais, como o modelo em cascata, essa abordagem é ideal para projetos inovadores
+onde os requisitos não são completamente conhecidos no início. Conforme descrito na metodologia (Capítulo 3), a adoção
+da prototipagem evolutiva permitiu a validação rápida de hipóteses sobre a interação do usuário e a eficácia dos
+agentes, reduzindo o risco de desenvolver uma solução que não atende às necessidades reais do público-alvo.

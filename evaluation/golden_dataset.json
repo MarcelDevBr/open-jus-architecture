@@ -1,0 +1,17 @@
+[
+  {
+    "question": "Comprei um celular pela internet e me arrependi. A loja pode se negar a aceitar a devolução porque eu já abri a caixa?",
+    "ideal_context_keywords": ["Art. 49", "direito de arrependimento", "sete dias", "fora do estabelecimento comercial"],
+    "ideal_answer": "Você tem o direito de se arrepender e devolver o produto em até 7 dias corridos após o recebimento, mesmo que tenha aberto a caixa. Este é o Direito de Arrependimento, garantido pelo Artigo 49 do Código de Defesa do Consumidor para compras online. A loja deve aceitar a devolução e reembolsar todos os valores pagos, incluindo o frete."
+  },
+  {
+    "question": "Meu chuveiro novo queimou com 15 dias de uso. A loja disse que a garantia é só com o fabricante. Isso está certo?",
+    "ideal_context_keywords": ["Art. 18", "vício do produto", "garantia legal", "responsabilidade solidária", "fornecedores"],
+    "ideal_answer": "Não, isso não está certo. De acordo com o Artigo 18 do Código de Defesa do Consumidor, tanto a loja (vendedor) quanto o fabricante são responsáveis por resolver problemas de produtos com defeito (vício). Isso é chamado de responsabilidade solidária. Você pode exigir a solução do problema diretamente da loja onde comprou."
+  },
+  {
+    "question": "Recebi uma cobrança na minha fatura de um serviço que eu cancelei. O que eu faço?",
+    "ideal_context_keywords": ["Art. 42", "parágrafo único", "cobrança indevida", "repetição do indébito", "valor igual ao dobro"],
+    "ideal_answer": "Você tem direito à devolução em dobro do valor que pagou indevidamente, acrescido de correção monetária e juros. Isso está previsto no Artigo 42, parágrafo único, do Código de Defesa do Consumidor. Entre em contato com a empresa para solicitar o estorno. Se não resolver, guarde os comprovantes e procure o Procon."
+  }
+]

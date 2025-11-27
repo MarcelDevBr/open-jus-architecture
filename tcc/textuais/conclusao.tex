@@ -1,0 +1,124 @@
+\chapter{CONCLUSÕES}
+
+Este trabalho se propôs a enfrentar o complexo desafio da assimetria de informação no campo jurídico brasileiro por meio
+da tecnologia. A questão central não era apenas fornecer respostas, mas garantir que fossem, simultaneamente,
+tecnicamente precisas, fundamentadas em fontes confiáveis e comunicadas de forma a empoderar o cidadão leigo. A seguir,
+são apresentadas as conclusões sobre como a arquitetura proposta e o protótipo desenvolvido responderam a esse desafio.
+
+\section{EM RELAÇÃO AO OBJETIVO GERAL}
+
+O objetivo geral de projetar, desenvolver e documentar uma arquitetura de software funcional para democratizar a
+informação jurídica foi plenamente alcançado. A principal contribuição deste trabalho reside na demonstração de que a
+arquitetura multiagente não é apenas uma solução técnica elegante, mas uma decisão de gestão estratégica \cite{wooldridge2009}. A
+especialização de tarefas, implementada através dos agentes, provou ser uma abordagem robusta para construir uma
+solução escalável e de manutenção simplificada. Mais importante, a arquitetura inerentemente explicável (XAI) do
+sistema, que oferece transparência tanto da fonte (via RAG) quanto do processo (via pipeline de agentes), estabelece um
+pilar para a confiança, governança e auditabilidade da solução, respondendo diretamente aos desafios de se criar uma
+solução de IA sustentável para um problema de negócio complexo \cite{arrieta2020}.
+
+O protótipo funcional, focado no Direito do Consumidor, serviu como uma prova de conceito conclusiva, validando que esta
+abordagem é viável e que o sistema consegue entregar um resultado final coeso e de alta qualidade, superando os desafios
+de confiabilidade e complexidade delineados no problema de pesquisa.
+
+\section{EM RELAÇÃO AOS OBJETIVOS ESPECÍFICOS}
+
+O sucesso no alcance do objetivo geral foi sustentado pelo cumprimento de cada um dos cinco objetivos específicos:
+
+\begin{enumerate}
+\item Modelagem da arquitetura em camadas: A arquitetura foi efetivamente modelada em quatro camadas (Apresentação, Orquestração, Cognição e Conhecimento), conforme detalhado no Capítulo 4. Essa separação de responsabilidades provou ser fundamental para a organização, manutenibilidade e escalabilidade do código.
+\item Implementação do sistema multiagente: O sistema foi implementado com sucesso utilizando o framework CrewAI. A criação de agentes distintos com papéis, objetivos e ferramentas próprias (Analista Jurídico, Comunicador) materializou a estratégia de "dividir para conquistar", sendo o principal diferencial da solução.
+\item Integração da técnica RAG: A técnica de Geração Aumentada por Recuperação foi o pilar para garantir a confiabilidade das respostas. Ao forçar o Analista Jurídico a basear sua análise em trechos recuperados do Código de Defesa do Consumidor, o risco de "alucinações" da IA foi mitigado, tornando o sistema uma fonte de informação mais segura e transparente (XAI).
+\item Desenvolvimento do protótipo funcional: O protótipo foi desenvolvido e validado, processando consultas sobre o Direito do Consumidor de ponta a ponta. Ele não apenas provou a viabilidade técnica da arquitetura, mas também serviu como um artefato tangível para a análise e documentação apresentadas neste trabalho.
+\item Alinhamento com os ODS: O projeto foi conscientemente alinhado com os Objetivos de Desenvolvimento Sustentável 4, 10, 12 e 16. Esta conexão não foi apenas teórica, mas se manifesta na própria missão do sistema: educar cidadãos, reduzir desigualdades no acesso à justiça, promover o consumo responsável e fortalecer instituições, mesmo que de forma indireta.
+\end{enumerate}
+
+\section{LIMITAÇÕES DO ESTUDO}
+
+Apesar dos resultados positivos, é importante reconhecer as limitações inerentes a este trabalho. Primeiramente, o
+protótipo foi desenvolvido e testado em um escopo limitado, focado exclusivamente no Código de Defesa do Consumidor.
+A generalização de sua eficácia para outras áreas do Direito, embora arquiteturalmente possível, exigiria a curadoria de
+novas bases de conhecimento e a adaptação dos agentes especialistas.
+
+Em segundo lugar, a avaliação da qualidade das respostas, embora baseada em um framework robusto proposto no Capítulo 4,
+ainda não foi submetida a um estudo em larga escala com usuários finais. A percepção de clareza, empatia e utilidade é
+subjetiva e requer validação qualitativa formal. Por fim, a dependência de APIs de LLMs de terceiros implica custos
+operacionais e uma certa perda de controle sobre a latência e a disponibilidade do modelo subjacente, fatores que seriam
+críticos em uma implantação em produção \cite{sartor2021}.
+
+\section{TRABALHOS FUTUROS}
+
+As conclusões e limitações deste estudo abrem um leque de oportunidades para a continuidade e evolução do projeto. A
+seguir, um roteiro detalhado para trabalhos futuros é proposto, organizado em frentes de curto, médio e longo prazo.
+
+\subsection{Curto Prazo: Validação e Expansão do Protótipo}
+
+\begin{itemize}
+    \item \textbf{Implementação do Framework de Avaliação Quantitativa:} O primeiro passo é implementar o framework de
+        avaliação descrito no Capítulo 4. Isso envolve a criação de um "Golden Dataset" robusto, com centenas de pares
+        de perguntas e respostas ideais validadas por especialistas. Em seguida, um script de avaliação automatizado deve
+        ser desenvolvido para calcular as métricas de Faithfulness, Answer Relevancy e Context Precision. Este processo
+        transformará a avaliação de um exercício manual em um pipeline de integração contínua, permitindo que a
+        qualidade do sistema seja monitorada a cada nova alteração.
+
+    \item \textbf{Estudo de Usabilidade com Usuários Finais:} É crucial realizar um estudo formal de usabilidade com um
+        grupo de usuários reais e leigos. Utilizando o método System Usability Scale (SUS), seria possível obter dados
+        quantitativos sobre a percepção de facilidade de uso. Além disso, sessões de "think-aloud", onde os usuários
+        verbalizam seus pensamentos enquanto interagem com o sistema, forneceriam insights qualitativos valiosos para
+        identificar pontos de atrito e refinar a persona do Agente Comunicador, garantindo que a empatia e a clareza
+        sejam eficazes na prática.
+
+    \item \textbf{Desenvolvimento de uma Biblioteca de Recursos Acionáveis:} Para além da informação, o empoderamento do
+        usuário vem da ação. Uma evolução natural do sistema seria a criação de uma ferramenta que, com base na
+        orientação fornecida, gerasse documentos práticos para o usuário. Por exemplo, após orientar sobre o direito de
+        arrerependimento, o sistema poderia oferecer a geração de um modelo de e-mail de notificação para a loja, já
+        preenchido com os dados relevantes e citando o artigo de lei apropriado.
+
+    \item \textbf{Implementação de um Dashboard de KPIs:} Os KPIs de TI e operação propostos devem ser implementados em
+        um painel de controle (dashboard) em tempo real. Ferramentas como o Google Data Studio ou o Power BI poderiam
+        ser conectadas aos logs do sistema para visualizar métricas como o tempo médio de resposta, a taxa de erro dos
+        agentes e o custo por interação. Isso daria ao gestor de TI uma visão clara da saúde operacional e financeira do
+        serviço.
+\end{itemize}
+
+\subsection{Médio Prazo: Expansão do Domínio e da Inteligência}
+
+\begin{itemize}
+    \item \textbf{Expansão da Base de Conhecimento para Novas Áreas do Direito:} A modularidade da arquitetura multiagente
+        foi projetada para facilitar a expansão. O próximo passo seria adicionar novas bases de conhecimento, como a
+        Consolidação das Leis do Trabalho (CLT) ou partes do Código Civil. Para cada nova base, um novo agente
+        especialista (ex: "Advogado Trabalhista") seria criado, e o Agente Roteador seria treinado para identificar e
+        direcionar as perguntas para o novo especialista, validando a escalabilidade da solução.
+
+    \item \textbf{Desenvolvimento de um Agente de Análise de Documentos:} Uma funcionalidade de alto valor seria a
+        criação de um novo tipo de agente capaz de analisar documentos enviados pelo usuário. Este "Agente Analista de
+        Documentos" poderia receber o upload de um contrato de aluguel, uma fatura de cartão de crédito ou uma apólice
+        de seguro e, utilizando técnicas de extração de informação, identificar cláusulas potencialmente abusivas,
+        cobranças indevidas ou inconsistências, fornecendo uma análise preliminar e direcionada.
+\end{itemize}
+
+\subsection{Longo Prazo: Rumo à Produção e à Inteligência Ativa}
+
+\begin{itemize}
+    \item \textbf{Migração da Infraestrutura para um Ambiente de Produção:} A stack de tecnologia do MVP, focada em
+        agilidade, precisaria ser migrada para uma infraestrutura robusta e escalável. Isso envolveria substituir o
+        Make.com e o Google Sheets por um sistema de backend mais tradicional, com um banco de dados como o PostgreSQL
+        ou Firestore para armazenar logs e dados de usuário, e um sistema de filas (como o RabbitMQ) para gerenciar as
+        requisições de forma assíncrona, garantindo alta disponibilidade e resiliência.
+
+    \item \textbf{Otimização de Custos com LLMs Open-Source:} A dependência de APIs pagas de LLMs é uma limitação
+        estratégica. Uma linha de pesquisa futura seria explorar a viabilidade de substituir os modelos proprietários
+        por modelos de linguagem open-source (como o Llama 3 ou o Mixtral) hospedados em infraestrutura própria. Isso
+        exigiria um investimento inicial em hardware (GPUs), mas poderia reduzir drasticamente o custo por interação no
+        longo prazo, tornando o serviço mais sustentável financeiramente.
+
+    \item \textbf{Desenvolvimento de um "Agente Proativo":} A evolução final do sistema seria a transição de um modelo
+        puramente reativo para um modelo proativo. Um "Agente Proativo" poderia monitorar, com a permissão do usuário,
+        informações relevantes (como novas leis de proteção de dados ou recalls de produtos) e notificá-lo ativamente
+        sobre direitos ou riscos que ele possa não conhecer, transformando o sistema de uma ferramenta de consulta em um
+        verdadeiro assistente pessoal para a cidadania.
+\end{itemize}
+
+Em suma, este trabalho não apenas entregou uma solução funcional, mas também estabeleceu um alicerce sólido e um roteiro
+claro para futuras pesquisas e desenvolvimentos. A arquitetura de software multiagente, combinada com a confiabilidade
+da RAG e os princípios do Legal Design, provou ser uma abordagem promissora e de alto impacto para utilizar a
+Inteligência Artificial como uma força para a democratização do acesso à justiça no Brasil.

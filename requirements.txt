@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+pydantic-settings
+python-dotenv
+PyYAML
+rich
+
+# --- Core AI Libraries ---
+langchain
+langchain-google-genai
+langchain-openai
+crewai
+crewai[tools]
+langchain-community
+faiss-cpu
+pypdf

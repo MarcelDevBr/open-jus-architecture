@@ -1,0 +1,415 @@
+\chapter{DESENVOLVIMENTO DO TRABALHO E APRESENTAÇÃO DE RESULTADOS}
+
+O principal resultado deste trabalho é o protótipo funcional que materializa a arquitetura proposta. Este capítulo
+aprofunda os detalhes técnicos do sistema, descrevendo como as camadas lógicas interagem, como os componentes de
+software executam suas funções e como a eficácia do sistema pode ser rigorosamente avaliada. O objetivo desta seção é
+ir além da descrição superficial, oferecendo um mergulho didático na implementação de cada componente, justificando as
+escolhas de tecnologia e design para que sirva como um guia para estudantes e profissionais de outras áreas.
+
+Para contextualizar o desenvolvimento do ponto de vista do usuário, o diagrama a seguir modela o principal caso de uso do
+sistema. Ele ilustra a interação fundamental entre o ator ("Usuário Leigo") e a funcionalidade central do sistema,
+"Consultar Informação Jurídica".
+
+\begin{figure}[H]
+    \centering
+    \caption{Diagrama de Caso de Uso principal do sistema.}
+    \label{fig:diagrama_05}
+    \includegraphics[width=0.8\textwidth]{imagens/diagrama_05}
+    \fonte{Elaborado pelo autor (2025).}
+\end{figure}
+
+O diagrama mostra que a principal interação do usuário (a consulta) é um processo composto. Para que o sistema entregue
+o valor esperado, ele internamente precisa executar um conjunto de subtarefas obrigatórias, representadas pela
+relação <<include>>:
+
+\begin{itemize}
+\item Analisar Consulta: O sistema primeiro precisa compreender a intenção e as entidades na pergunta do usuário.
+\item Recuperar Legislação (RAG): Em seguida, busca a informação relevante na base de conhecimento.
+\item Gerar Resposta Simplificada: Por fim, traduz a informação técnica para uma linguagem acessível.
+\end{itemize}
+
+Este modelo de caso de uso serve como uma ponte entre a perspectiva do usuário e a arquitetura de software detalhada nas
+seções seguintes, que descreve como esses casos de uso são implementados.
+
+As seções a seguir detalham as camadas do sistema e o framework de avaliação.
+
+\section{Arquitetura Lógica em Camadas: Uma Análise Aprofundada}
+
+A arquitetura do sistema foi concebida em quatro camadas lógicas principais, garantindo a separação de preocupações
+(Separation of Concerns), a modularidade e a manutenibilidade, princípios fundamentais da Engenharia de Software. A
+seguir, cada camada é explorada em detalhes.
+
+\begin{figure}[H]
+    \centering
+    \caption{Diagrama: Arquitetura Lógica em Camadas.}
+    \label{fig:diagrama_06}
+    \includegraphics[width=0.6\textwidth]{imagens/diagrama_06}
+    \fonte{Elaborado pelo autor (2025).}
+\end{figure}
+
+\subsection{Camada de Apresentação: A Porta de Entrada}
+
+A Camada de Apresentação é a porta de entrada do sistema, responsável por receber as requisições dos usuários e
+formatá-las para o processamento interno. No protótipo, esta camada é implementada como uma API RESTful utilizando o
+framework \textbf{FastAPI}.
+
+A escolha pelo FastAPI não foi acidental. Para um projeto que envolve IA, a performance é crucial, e o FastAPI é um dos
+frameworks web Python mais rápidos disponíveis, graças ao seu suporte nativo a operações assíncronas. Além disso, ele
+oferece duas vantagens estratégicas para o desenvolvimento ágil:
+\begin{itemize}
+    \item \textbf{Validação de Dados com Pydantic:} O FastAPI utiliza a biblioteca Pydantic para declarar os modelos de
+        dados da API. Isso significa que toda requisição que chega ao sistema é automaticamente validada. Se um campo
+        obrigatório estiver faltando ou se um tipo de dado estiver incorreto, o FastAPI retorna um erro claro e
+        informativo ao cliente, antes mesmo que a requisição chegue à lógica de negócio. Isso torna a API mais robusta
+        e segura.
+    \item \textbf{Documentação Automática (Swagger UI):} O FastAPI gera automaticamente uma documentação interativa da
+        API (usando os padrões OpenAPI e Swagger UI). Isso é imensamente valioso, pois permite que qualquer pessoa
+        (incluindo outros desenvolvedores ou testadores) possa visualizar os endpoints disponíveis, seus parâmetros e
+        até mesmo testá-los diretamente pelo navegador, sem a necessidade de ferramentas adicionais.
+\end{itemize}
+
+Sua função é expor um \textit{endpoint} HTTP que aceita a pergunta do usuário, garantindo que a interação com o restante
+do sistema seja padronizada e segura.
+
+\subsection{Camada de Orquestração: O Cérebro da Operação}
+
+A Camada de Orquestração gerencia o fluxo de trabalho e a colaboração entre os agentes. Esta camada não executa o
+trabalho cognitivo em si, mas atua como um "maestro", definindo qual agente deve atuar em cada etapa e como a informação
+flui entre eles. O framework \textbf{CrewAI} é o principal componente aqui.
+
+O CrewAI foi escolhido por sua abordagem intuitiva e poderosa para a criação de sistemas multiagente, baseada em três
+conceitos principais:
+\begin{itemize}
+    \item \textbf{Agents:} São os trabalhadores da equipe. Cada agente é configurado com um `role` (papel), `goal`
+        (objetivo), `backstory` (contexto) e, opcionalmente, `tools` (ferramentas) que ele pode usar. Essa configuração,
+        feita via Engenharia de Prompts, transforma um LLM genérico em um especialista focado.
+    \item \textbf{Tasks:} São as tarefas a serem executadas. Cada tarefa tem uma descrição clara e um agente designado
+        para realizá-la. Crucialmente, as tarefas podem receber o \textit{contexto} da tarefa anterior, criando uma
+        cadeia de processamento.
+    \item \textbf{Crew:} É a equipe formada pelos agentes e pelas tarefas. É na `Crew` que se define o processo de
+        execução. Para este projeto, foi utilizado o \textbf{Process.sequential}, que garante que as tarefas sejam
+        executadas em uma ordem linear e previsível: a saída da Tarefa 1 se torna a entrada da Tarefa 2, e assim por
+        diante. Essa linearidade é fundamental para garantir a transparência e a auditabilidade do processo de
+        raciocínio, um dos pilares da XAI.
+\end{itemize}
+
+O CrewAI gerencia a complexidade de passar as informações entre os agentes e o LLM, permitindo que o desenvolvedor se
+concentre na lógica de negócio (definir os agentes e as tarefas) em vez de na infraestrutura de comunicação.
+
+\subsection{Camada de Cognição: Os Especialistas em Ação}
+
+É nesta camada que o "raciocínio" de fato acontece. Cada agente é uma instância de um LLM configurado com um prompt
+específico para se tornar um especialista. A seguir, detalhamos os três agentes principais do protótipo:
+
+\subsubsection{Agente 1: O Roteador (Router Agent)}
+\begin{itemize}
+    \item \textbf{Justificativa de Design:} Em um sistema projetado para escalar, é inviável ter um único agente que
+        conheça todas as áreas do Direito. O Roteador atua como um "triador" inteligente. Sua única responsabilidade é
+        analisar a pergunta do usuário e direcioná-la para o especialista mais adequado. Isso torna o sistema modular e
+        fácil de expandir: para adicionar uma nova área (ex: Direito Trabalhista), basta criar um novo agente
+        especialista e ensinar o Roteador a reconhecer perguntas sobre esse tópico.
+    \item \textbf{Prompt (Exemplo Simplificado):}
+        \begin{quote}
+        \textbf{Role:} Roteador de Consultas Jurídicas \\
+        \textbf{Goal:} Analisar a pergunta do usuário e identificar a área do Direito correspondente, escolhendo o
+        especialista mais qualificado da lista: [Advogado do Consumidor, Advogado Criminalista, Advogado Cível]. \\
+        \textbf{Backstory:} Você é um assistente de triagem em um grande escritório de advocacia. Sua função é ler a
+        pergunta de um novo cliente e encaminhá-la para o departamento correto, garantindo uma resposta rápida e
+        eficiente. Você deve ser preciso e retornar apenas o nome do cargo do especialista escolhido.
+        \end{quote}
+\end{itemize}
+
+\subsubsection{Agente 2: O Analista Jurídico (Advogado do Consumidor)}
+\begin{itemize}
+    \item \textbf{Justificativa de Design:} Este é o coração técnico da análise. Sua função é receber a pergunta do
+        usuário (já validada pelo Roteador) e realizar uma análise aprofundada e precisa. Para garantir a
+        confiabilidade e mitigar o risco de alucinações, este agente é o único que tem acesso à ferramenta de RAG.
+    \item \textbf{Prompt (Exemplo Simplificado):}
+        \begin{quote}
+        \textbf{Role:} Advogado Especialista em Direito do Consumidor \\
+        \textbf{Goal:} Fornecer uma análise jurídica precisa e detalhada sobre a pergunta do usuário, baseando-se
+        estritamente nas informações recuperadas da sua ferramenta de busca na legislação. \\
+        \textbf{Backstory:} Você é um advogado experiente e meticuloso, especializado no Código de Defesa do Consumidor.
+        Sua principal preocupação é a precisão. Você NUNCA responde com base em seu conhecimento geral; você sempre cita
+        a fonte legal para cada afirmação que faz. Sua resposta deve ser técnica e completa, servindo como um parecer
+        para outro profissional.
+        \end{quote}
+    \item \textbf{Ferramentas Associadas:} `rag_tool` (para buscar na base de conhecimento do CDC).
+\end{itemize}
+
+\subsubsection{Agente 3: O Comunicador (Communication Agent)}
+\begin{itemize}
+    \item \textbf{Justificativa de Design:} A precisão técnica, por si só, não democratiza a informação. Um parecer
+        jurídico denso pode ser tão inútil para um leigo quanto nenhuma informação. O Comunicador resolve este problema
+        atuando como um "tradutor". Ele pega a análise técnica e densa do Analista Jurídico e a reescreve em uma
+        linguagem simples, empática e acionável, focando nos princípios do Legal Design.
+    \item \textbf{Prompt (Exemplo Simplificado):}
+        \begin{quote}
+        \textbf{Role:} Especialista em Comunicação e Legal Design \\
+        \textbf{Goal:} Transformar a análise jurídica técnica recebida em uma resposta clara, amigável e empática para um
+        usuário leigo. O foco é empoderar o usuário, explicando seus direitos e os próximos passos que ele pode tomar. \\
+        \textbf{Backstory:} Você é um especialista em UX Writing que trabalha em uma organização de defesa do consumidor.
+        Sua paixão é traduzir "juridiquês" para o português claro. Você deve evitar jargões, usar analogias, estruturar
+        a resposta com listas e negrito para facilitar a leitura e sempre adotar um tom tranquilizador e encorajador.
+        \end{quote}
+\end{itemize}
+
+\subsection{Camada de Conhecimento: A Base da Verdade}
+
+A Camada de Conhecimento provê os recursos para a Camada de Cognição. Seus principais componentes são a base de
+conhecimento vetorial e as ferramentas que os agentes podem invocar.
+
+O processo de criação e uso da ferramenta RAG pode ser dividido em duas fases:
+
+\subsubsection{Fase 1: Indexação (Processo Offline)}
+Antes que qualquer consulta possa ser feita, a base de conhecimento precisa ser construída. Este processo, executado
+apenas uma vez ou sempre que a legislação muda, segue os seguintes passos:
+\begin{enumerate}
+    \item \textbf{Carregamento dos Documentos:} O texto completo do Código de Defesa do Consumidor é carregado a partir
+        de um arquivo de texto.
+    \item \textbf{Divisão em Trechos (Chunking):} O documento é quebrado em trechos menores e sobrepostos (chunks). Essa
+        etapa é crucial. Se os trechos forem muito grandes, a busca perde especificidade; se forem muito pequenos, o
+        contexto pode ser perdido. Um tamanho de chunk de 500 a 1000 caracteres, com uma sobreposição de 100 a 200
+        caracteres, é um ponto de partida comum para garantir que as sentenças não sejam cortadas ao meio.
+    \item \textbf{Geração de Embeddings:} Cada chunk de texto é então passado por um modelo de embeddings (como os da
+        OpenAI ou modelos open-source), que converte o texto em um vetor numérico.
+    \item \textbf{Armazenamento no Índice Vetorial:} Os vetores resultantes são armazenados em um índice do
+        \textbf{FAISS (Facebook AI Similarity Search)}. O FAISS é uma biblioteca altamente otimizada para busca de
+        similaridade em grandes conjuntos de vetores, permitindo encontrar os vizinhos mais próximos de um dado vetor de
+        forma extremamente rápida.
+\end{enumerate}
+
+\subsubsection{Fase 2: Recuperação (Processo Online)}
+Quando um usuário faz uma pergunta, o seguinte fluxo acontece em tempo real:
+\begin{enumerate}
+    \item \textbf{Vetorização da Consulta:} A pergunta do usuário passa pelo mesmo modelo de embeddings usado na
+        indexação, gerando um vetor de consulta.
+    \item \textbf{Busca por Similaridade:} O FAISS é usado para comparar o vetor da consulta com todos os vetores no
+        índice, retornando os 'k' trechos (chunks) cujos vetores são mais próximos (ou seja, mais semanticamente
+        relevantes) à pergunta.
+    \item \textbf{Construção do Contexto:} Os textos desses 'k' trechos recuperados são concatenados para formar o
+        contexto que será injetado no prompt do Agente Analista Jurídico.
+\end{enumerate}
+
+Este processo de duas fases garante que o agente tenha acesso rápido e preciso ao conhecimento relevante para responder
+à consulta do usuário de forma fundamentada.
+
+\subsection{Fluxo de Execução da Requisição (Diagrama de Estados)}
+
+Se a arquitetura em camadas descreve a estrutura estática do sistema, o diagrama de estados a seguir ilustra seu
+comportamento dinâmico. Ele modela o ciclo de vida de uma única consulta de usuário, desde o momento em que é recebida
+pela API até a entrega da resposta final, detalhando a transição entre as responsabilidades dos agentes.
+
+\begin{figure}[H]
+    \centering
+    \caption{Diagrama de Estados do processamento de uma consulta.}
+    \label{fig:diagrama_07}
+    \includegraphics[width=1.0\textwidth]{imagens/diagrama_07}
+    \fonte{Elaborado pelo autor (2025).}
+\end{figure}
+
+O diagrama evidencia o fluxo principal de sucesso, onde a requisição passa sequencialmente pelos agentes especializados.
+Além disso, ele contempla os estados de falha, que podem ocorrer em qualquer etapa do processo, desde uma validação de
+entrada mal-sucedida na camada de apresentação até um erro inesperado durante a execução de um dos agentes na camada de
+cognição.
+
+\section{Componentes do Sistema e Mapeamento Arquitetural}
+
+O fluxo de uma requisição através do sistema ilustra a interação entre os componentes de software e as camadas lógicas.
+O diagrama de sequência a seguir (Diagrama 8) detalha essa interação, desde a chegada da requisição até a devolução da
+resposta final.
+
+\begin{figure}[H]
+    \centering
+    \caption{Diagrama de Sequência do fluxo de uma requisição no sistema.}
+    \label{fig:diagrama_08}
+    \includegraphics[width=1.0\textwidth]{imagens/diagrama_08}
+    \fonte{Elaborado pelo autor (2025).}
+\end{figure}
+
+Quando um usuário envia uma pergunta, o \texttt{main.py} (Camada de Apresentação) a recebe e invoca o \texttt{crew\_manager.py} (Camada de Orquestração). Este, por sua vez, instancia a equipe de agentes (\texttt{core/agents/*.py}) e lhes atribui uma sequência de tarefas, conforme o fluxo acima. Durante a execução, um agente como o Analista Jurídico (Camada de Cognição) utiliza a ferramenta \texttt{rag\_tool.py} (Camada de Conhecimento) para buscar artigos relevantes no Código de Defesa do Consumidor (\texttt{knowledge\_base/}). O resultado final é então consolidado e retornado ao usuário.
+
+Os componentes de software do protótipo foram mapeados para as camadas lógicas, conforme a tabela abaixo:
+
+\begin{table}[H]
+    \caption{Descrição dos componentes e camadas da arquitetura\label{tab:minha-tabela}}
+    \centering
+    \begin{tabular}{ l l p{0.5\textwidth} }
+        \toprule
+        \textbf{Componente} & \textbf{Camada} & \textbf{Descrição} \\
+        \midrule
+        \texttt{main.py} & Apresentação & Expõe a API FastAPI e gerencia as requisições de entrada. \\
+        \texttt{core/crew\_manager.py} & Orquestração & Define a "tripulação" de agentes e a sequência de tarefas. \\
+        \texttt{core/agents/*.py} & Cognição & Implementação individual de cada agente especializado. \\
+        \texttt{core/tools/*.py} & Conhecimento & Ferramentas específicas que os agentes podem usar. \\
+        \texttt{core/rag\_tool.py} & Conhecimento & Implementação da ferramenta de busca na base de conhecimento. \\
+        \texttt{knowledge\_base/} & Conhecimento & Repositório dos documentos legais (ex: CDC). \\
+        \bottomrule
+    \end{tabular}
+    \fonte{Elaborado pelo autor (2025).}
+\end{table}
+
+\section{Framework de Avaliação: Métricas e Exemplos Práticos}
+
+Para validar rigorosamente a eficácia do sistema para além da prova de conceito, um framework de avaliação que combina
+métricas de IA, indicadores de desempenho de TI e análise qualitativa é essencial. A avaliação objetiva é o que permite
+a transição de um protótipo para um serviço confiável.
+
+\subsection{Métricas de Qualidade da IA (Baseadas em Golden Dataset)}
+
+Um Golden Dataset é um conjunto de dados de teste de alta qualidade, criado manualmente por especialistas, que 
+serve como "gabarito" para avaliar o desempenho do sistema. Ele contém triplas de pergunta, contexto\_ideal
+(o trecho da lei que deveria ser encontrado) e resposta\_ideal. Com base nele, medimos métricas de ponta a ponta que
+avaliam a cadeia de RAG. A seguir, detalhamos cada métrica com exemplos práticos:
+
+\subsubsection{Faithfulness (Fidelidade)}
+A resposta gerada se atém estritamente ao contexto da lei recuperado? Esta métrica penaliza "alucinações".
+\begin{itemize}
+    \item \textbf{Pergunta do Usuário:} "Qual o prazo para o fornecedor consertar meu produto com defeito?"
+    \item \textbf{Contexto Recuperado (Art. 18 do CDC):} "...não sendo o vício sanado no prazo máximo de trinta dias, pode
+        o consumidor exigir, alternativamente e à sua escolha: a substituição do produto..."
+    \item \textbf{Resposta com Alta Fidelidade:} "De acordo com o Artigo 18 do CDC, o fornecedor tem o prazo máximo de
+        \textbf{30 dias} para consertar o produto."
+    \item \textbf{Resposta com Baixa Fidelidade (Alucinação):} "O fornecedor tem \textit{geralmente um mês, mas pode ser
+        estendido para 45 dias em alguns casos}, para consertar o produto." (A informação de "45 dias" é uma
+        alucinação, pois não estava no contexto recuperado).
+\end{itemize}
+
+\subsubsection{Answer Relevancy (Relevância da Resposta)}
+A resposta, mesmo que fiel, responde diretamente à pergunta do usuário?
+\begin{itemize}
+    \item \textbf{Pergunta do Usuário:} "Comprei um presente de Natal que veio com defeito. A loja precisa trocar
+        imediatamente?"
+    \item \textbf{Contexto Recuperado (Art. 18 do CDC):} (O mesmo do exemplo anterior, sobre o prazo de 30 dias para
+        conserto).
+    \item \textbf{Resposta Relevante:} "Entendo a urgência por ser um presente. No entanto, a lei (Art. 18 do CDC)
+        geralmente dá ao fornecedor um prazo de até 30 dias para consertar o produto. A troca imediata só é obrigatória
+        se o produto for essencial ou se o conserto comprometer sua qualidade."
+    \item \textbf{Resposta Irrelevante (mas Fiel):} "O fornecedor tem o prazo máximo de 30 dias para consertar o
+        produto." (A resposta é factualmente correta, mas não aborda a nuance da pergunta do usuário sobre a troca
+        imediata de um presente).
+\end{itemize}
+
+\subsubsection{Context Precision (Precisão do Contexto)}
+O sistema recuperou os trechos de lei corretos e relevantes para a pergunta? Esta métrica avalia a eficácia do
+componente de busca (o "R" de RAG).
+\begin{itemize}
+    \item \textbf{Pergunta do Usuário:} "Recebi uma cobrança em meu cartão de crédito por um serviço que cancelei. O que
+        fazer?"
+    \item \textbf{Contexto com Alta Precisão:} Recupera o Art. 42, Parágrafo único, do CDC, que trata da devolução em
+        dobro de valores cobrados indevidamente.
+    \item \textbf{Contexto com Baixa Precisão:} Recupera o Art. 49 do CDC, que trata do direito de arrependimento em
+        compras online. (Embora seja um artigo do CDC, ele não tem relação com o problema de cobrança indevida).
+\end{itemize}
+
+\subsection{Avaliação Qualitativa da Experiência do Usuário}
+
+Além das métricas quantitativas, a avaliação da experiência do usuário é fundamental para medir o sucesso de um sistema
+centrado no ser humano. Uma abordagem padrão para isso é o \textbf{System Usability Scale (SUS)}, um questionário de 10
+itens que fornece uma medida da usabilidade percebida do sistema \cite{brooke1996}.
+
+A aplicação do SUS envolveria recrutar um grupo de usuários representativos do público-alvo, pedir que eles realizem
+tarefas específicas com o protótipo (ex: "Descubra seus direitos se um produto que você comprou online atrasar a
+entrega") e, em seguida, solicitar que respondam ao questionário SUS. O resultado seria uma pontuação de 0 a 100,
+oferecendo um benchmark claro da usabilidade do sistema e identificando pontos de atrito na interação que métricas de IA
+sozinhas não conseguem capturar.
+
+\subsection{Auditoria e Explicabilidade na Prática: O Log de Rastreabilidade}
+
+A arquitetura multiagente, além de seus benefícios de modularidade, é a chave para a implementação de um sistema
+auditável. A capacidade de rastrear o processo de decisão de uma IA é um dos objetivos centrais da XAI, pois transforma
+um modelo "caixa-preta" em um processo "caixa-de-vidro" (glass-box) \cite{arrieta2020}. No protótipo, isso é
+materializado através da geração de um \textbf{log de rastreabilidade} para cada consulta.
+
+Frameworks como o CrewAI, ao executarem as tarefas de forma sequencial, permitem que as entradas e saídas de cada agente
+sejam capturadas. Um log de auditoria para uma consulta seria estruturado da seguinte forma:
+
+\begin{verbatim}
+--- INÍCIO DA AUDITORIA: ID da Requisição: 12345-ABCDE ---
+
+[ETAPA 1: ROTEAMENTO]
+- Agente: Router Agent
+- Entrada (Pergunta do Usuário): "Comprei um celular pela internet e me arrependi. 
+  A loja pode se negar a aceitar a devolução porque eu já abri a caixa?"
+- Saída (Decisão do Roteador): "Advogado do Consumidor"
+
+[ETAPA 2: ANÁLISE TÉCNICA]
+- Agente: Advogado do Consumidor
+- Entrada (Contexto da Etapa 1): Pergunta do usuário.
+- Ação: Uso da Ferramenta RAG com a consulta.
+- Dados da Ferramenta (Contexto Recuperado): 
+  "Art. 49. O consumidor pode desistir do contrato, no prazo de 7 dias a contar 
+  de sua assinatura ou do ato de recebimento do produto ou serviço, sempre que a 
+  contratação de fornecimento de produtos e serviços ocorrer fora do 
+  estabelecimento comercial, especialmente por telefone ou a domicílio."
+- Saída (Análise Técnica Gerada): "Com base no Art. 49 do CDC, o consumidor 
+  tem o direito de arrependimento em compras online no prazo de 7 dias. O fato 
+  de abrir a caixa não invalida esse direito, pois é necessário para avaliar o 
+  produto. O fornecedor deve aceitar a devolução e restituir os valores pagos."
+
+[ETAPA 3: COMUNICAÇÃO]
+- Agente: Communication Agent
+- Entrada (Contexto da Etapa 2): A análise técnica do agente anterior.
+- Saída (Resposta Final ao Usuário): "Olá! Entendo perfeitamente a sua dúvida... 
+  Você tem o direito de se arrepender e devolver o produto, mesmo que tenha 
+  aberto a caixa. Este é o chamado 'Direito de Arrependimento', garantido pelo 
+  Artigo 49 do Código de Defesa do Consumidor..."
+
+--- FIM DA AUDITORIA ---
+\end{verbatim}
+
+Este log detalhado é uma ferramenta de gestão de valor inestimável:
+\begin{itemize}
+    \item \textbf{Depuração de Erros (Debugging):} Se a resposta final estiver incorreta, o log permite identificar
+        exatamente onde a falha ocorreu. Foi um erro de roteamento? A ferramenta RAG recuperou o artigo errado? Ou o
+        Agente Comunicador interpretou mal a análise técnica?
+    \item \textbf{Otimização de Performance:} A análise dos logs pode revelar gargalos. Por exemplo, se o Agente Analista
+        consistentemente leva muito tempo, pode ser um indicativo de que a ferramenta RAG precisa de otimização ou que o
+        prompt do agente precisa ser mais direto.
+    \item \textbf{Governança e Conformidade:} Em um ambiente corporativo, ter um registro auditável de por que uma
+        determinada orientação foi fornecida a um cliente é fundamental para a gestão de riscos e para demonstrar a
+        conformidade com as políticas internas e regulamentações externas.
+\end{itemize}
+
+\subsection{Indicadores Chave de Desempenho (KPIs) de TI e Operação}
+
+Enquanto as métricas de IA avaliam a \textit{qualidade} da resposta, os Indicadores Chave de Desempenho (KPIs) avaliam a
+\textit{saúde e a eficiência} do serviço do ponto de vista da Gestão de TI. Eles são cruciais para garantir que o
+sistema seja sustentável, escalável e ofereça uma boa experiência ao usuário. Os seguintes KPIs são propostos:
+
+\begin{table}[H]
+    \caption{Framework de Avaliação: Métricas e KPIs\label{tab:framework-avaliacao}}
+    \centering
+    \begin{tabular}{p{0.20\textwidth} p{0.20\textwidth} p{0.36\textwidth} p{0.1\textwidth}}
+        \toprule
+        \textbf{Categoria KPI} & \textbf{KPI Específico} & \textbf{Definição/Propósito} & \textbf{Frequência de Medição} \\
+        \midrule
+        \texttt{Engajamento do Usuário} & Usuários Únicos Mensais & Número de usuários distintos que interagem com o bot. Mede o alcance e a adoção. & Mensal \\
+        \texttt{} & Tempo Médio de Interação & Duração média das conversas do usuário com o bot. Pode indicar a complexidade das questões ou o nível de engajamento. & Semanal \\
+        \texttt{Desempenho de TI} & Tempo de Resposta do Bot & Latência entre a pergunta e a resposta do bot. Crítico para a experiência do usuário. & Diário \\
+        \texttt{} & Disponibilidade (Uptime) & Percentual de tempo em que o serviço está operacional. Mede a confiabilidade da infraestrutura. & Mensal \\
+        \texttt{} & Taxa de Erro da IA & Frequência de falhas na compreensão da intenção do usuário ou erros na execução das tarefas dos agentes. & Semanal \\
+        \texttt{Sustentabilidade} & Custo por Interação (CPI)  & Custo médio de cada interação (custos de API de LLM, infraestrutura). Essencial para a viabilidade financeira do projeto. & Mensal \\
+        \bottomrule
+    \end{tabular}
+    \fonte{Elaborado pelo autor (2025).}
+\end{table}
+
+\subsection{Valor Estratégico dos Dados para a Gestão}
+
+É crucial entender que o framework de avaliação não serve apenas para validar a qualidade técnica do protótipo; ele
+transforma o sistema em uma ferramenta de inteligência de negócio para a tomada de decisão gerencial. Um gestor não
+está apenas implementando um "chatbot", mas sim um mecanismo de captura de insights valiosos diretamente do seu
+público-alvo. As interações dos usuários, agregadas e anonimizadas, geram um painel de controle estratégico que responde
+a perguntas cruciais para a gestão do negócio:
+
+\begin{itemize}
+\item Inteligência de Produto e Serviço: Quais são as dúvidas e reclamações mais frequentes dos consumidores? A análise desses dados pode revelar falhas de design em um produto, problemas na comunicação de uma oferta ou lacunas no serviço de pós-venda. A decisão de priorizar uma melhoria no produto X ou reescrever o manual do serviço Y pode ser diretamente informada por esses insights.
+\item Otimização Operacional: Em quais tópicos a IA demonstra maior dificuldade (baixa Answer Relevancy)? Isso não aponta apenas uma deficiência da IA, mas pode indicar áreas onde a própria documentação interna da empresa é confusa ou incompleta. A decisão de investir em treinamento para a equipe de suporte ou melhorar a base de conhecimento interna é uma consequência direta.
+\item Planejamento Financeiro e de TI: Qual o Custo por Interação e como ele se correlaciona com a complexidade da pergunta? A análise desses KPIs permite ao gestor de TI um planejamento orçamentário preciso, a otimização de custos de infraestrutura e a negociação de contratos com provedores de API de LLMs.
+\end{itemize}
+
+Dessa forma, o sistema proposto deixa de ser um mero canal de atendimento para se tornar um ativo estratégico.
+Ele gera um fluxo contínuo de dados que capacita o gestor a otimizar a operação, justificar investimentos e direcionar
+a evolução do negócio com base em evidências, não em suposições. A solução, portanto, é um motor para a tomada de
+decisões de gestão.

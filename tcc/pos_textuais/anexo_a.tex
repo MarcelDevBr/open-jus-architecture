@@ -1,0 +1,109 @@
+\begin{anexosenv}
+\chapter{EXEMPLOS DE INTERAÇÃO COM O SISTEMA}
+\label{anexo:exemplos_interacao}
+
+Esta seção ilustra o resultado prático do trabalho, apresentando interações completas com o protótipo. Os exemplos demonstram como a pipeline de agentes (Roteamento, Análise e Comunicação) processa diferentes tipos de perguntas e as transforma em orientações claras e acionáveis.
+
+\section{Exemplo 1: Direito do Consumidor (Pergunta Direta)}
+
+Este exemplo demonstra o fluxo padrão para uma pergunta clara dentro do domínio inicial do protótipo.
+
+\subsection*{Pergunta do Usuário:}
+\begin{quote}
+"Comprei um celular pela internet e me arrependi. A loja pode se negar a aceitar a devolução porque eu já abri a caixa?"
+\end{quote}
+
+\subsection*{Resposta Gerada pelo Sistema:}
+\begin{quote}
+Olá! Entendo perfeitamente a sua dúvida. É muito comum ficarmos inseguros sobre nossos direitos ao comprar online. Vamos esclarecer isso para você.
+
+\textbf{Você tem o direito de se arrepender e devolver o produto, mesmo que tenha aberto a caixa.}
+
+Este é o chamado \textbf{"Direito de Arrependimento"}, e ele está garantido pelo \textbf{Artigo 49 do Código de Defesa do Consumidor (CDC)}. Esse direito se aplica a todas as compras feitas fora de um estabelecimento comercial físico, como é o caso de compras pela internet, por telefone ou por catálogo.
+
+\textbf{O que a lei diz:}
+\begin{itemize}
+    \item \textbf{Prazo:} Você tem um prazo de \textbf{7 dias corridos} para desistir da compra, contados a partir da data em que recebeu o produto.
+    \item \textbf{Justificativa:} Você não precisa dar nenhuma justificativa para a loja. A simples insatisfação ou arrependimento já é motivo suficiente.
+    \item \textbf{Caixa Aberta:} O fato de você ter aberto a embalagem para conferir o produto não invalida o seu direito. É seu direito avaliar o produto que recebeu. A loja só poderia recusar a devolução se ficasse comprovado que você usou o produto de forma indevida, causando danos a ele (mau uso).
+    \item \textbf{Custos:} Todos os valores que você pagou, incluindo o frete, devem ser devolvidos. Os custos com a devolução do produto também são de responsabilidade da loja.
+\end{itemize}
+
+\textbf{O que você pode fazer agora:}
+\begin{enumerate}
+    \item \textbf{Entre em contato com a loja} o mais rápido possível, formalmente (por e-mail ou chat), para informar sobre sua decisão de exercer o Direito de Arrependimento.
+    \item \textbf{Mencione o Artigo 49 do Código de Defesa do Consumidor}. Isso mostra que você conhece seus direitos.
+    \item \textbf{Siga as instruções da loja} para a devolução do produto.
+\end{enumerate}
+
+Se a loja se recusar a aceitar a devolução, você pode procurar o Procon da sua cidade.
+
+\textit{Lembre-se: esta é uma orientação inicial com base nas informações que você forneceu. Ela não substitui uma consulta jurídica com um advogado.}
+\end{quote}
+
+\hrulefill
+
+\section{Exemplo 2: Roteamento para Outra Área (Direito Penal)}
+
+Este exemplo demonstra a capacidade do \texttt{router\_agent} de identificar o especialista correto quando a pergunta foge do Direito do Consumidor.
+
+\subsection*{Pergunta do Usuário:}
+\begin{quote}
+"Fui acusado de um crime que não cometi, o que devo fazer? Estou desesperado."
+\end{quote}
+
+\subsection*{Resposta Gerada pelo Sistema:}
+\begin{quote}
+Olá. Lamento que você esteja passando por uma situação tão difícil e angustiante. É compreensível que se sinta desesperado, mas manter a calma agora é fundamental.
+
+A sua questão é muito séria e pertence à área do Direito Penal. A orientação correta neste momento é crucial.
+
+\textbf{Ação Imediata e Mais Importante:}
+\begin{itemize}
+    \item \textbf{Procure um Advogado Criminalista:} Você precisa, com a máxima urgência, de um advogado especializado em Direito Criminal. Este profissional é o único que pode analisar os detalhes do seu caso, garantir que seus direitos sejam respeitados e traçar a melhor estratégia de defesa.
+    \item \textbf{Não fale sobre o caso:} Evite discutir os detalhes da acusação com qualquer pessoa que não seja seu advogado. Tudo o que você disser pode ser usado no processo.
+    \item \textbf{Defensoria Pública:} Se você não tiver condições de contratar um advogado particular, procure a Defensoria Pública do seu estado. Eles oferecem assistência jurídica gratuita.
+\end{itemize}
+
+Neste momento, o passo mais seguro e correto é buscar assessoria jurídica qualificada imediatamente.
+
+\textit{Lembre-se: esta é uma orientação emergencial e não substitui, de forma alguma, a consulta e o acompanhamento por um advogado.}
+\end{quote}
+
+\hrulefill
+
+\section{Exemplo 3: Pergunta Vaga e Resposta Cautelosa}
+
+Este exemplo mostra como o sistema reage a uma pergunta vaga, onde não é possível dar uma orientação específica sem mais detalhes, demonstrando um comportamento seguro.
+
+\subsection*{Pergunta do Usuário:}
+\begin{quote}
+"Tenho um problema com uma empresa. Eles não cumprem o que prometem. Posso processar?"
+\end{quote}
+
+\subsection*{Resposta Gerada pelo Sistema:}
+\begin{quote}
+Olá! Entendo sua frustração com a empresa. É muito desgastante quando sentimos que nossos direitos não estão sendo respeitados.
+
+Sua pergunta é importante, mas a resposta depende muito dos detalhes específicos do seu caso. Para saber se uma ação judicial (processo) é o melhor caminho, é preciso analisar alguns pontos.
+
+\textbf{Para te ajudar a entender melhor, considere as seguintes questões:}
+\begin{itemize}
+    \item \textbf{Qual foi a promessa?} O que a empresa prometeu exatamente? Isso estava em um contrato, anúncio ou conversa registrada? Ter provas do que foi combinado é muito importante.
+    \item \textbf{O que aconteceu de fato?} Como a empresa descumpriu a promessa? O produto veio com defeito, o serviço não foi entregue, a cobrança foi errada?
+    \item \textbf{Você já tentou resolver amigavelmente?} Você já entrou em contato com a empresa para tentar resolver? Guarde os protocolos e e-mails dessas tentativas. Muitas vezes, um acordo pode ser mais rápido e menos custoso que um processo.
+\end{itemize}
+
+\textbf{Possíveis Caminhos:}
+\begin{enumerate}
+    \item \textbf{Consumidor.gov.br:} É uma plataforma online do governo onde você pode registrar uma reclamação formal. Muitas empresas respondem e resolvem os casos por lá.
+    \item \textbf{Procon:} O órgão de defesa do consumidor da sua cidade pode mediar um acordo com a empresa.
+    \item \textbf{Ação Judicial:} Se nenhuma das alternativas acima funcionar, você pode, sim, iniciar um processo. Para causas de menor valor, você pode procurar o Juizado Especial Cível (Pequenas Causas), onde, dependendo do valor, não é obrigatório ter um advogado.
+\end{enumerate}
+
+A melhor pessoa para te dizer qual o caminho ideal é um advogado, que poderá analisar suas provas e a situação completa.
+
+\textit{Lembre-se: esta é uma orientação geral para te ajudar a organizar as ideias. Ela não é uma recomendação legal definitiva.}
+\end{quote}
+
+\end{anexosenv}
